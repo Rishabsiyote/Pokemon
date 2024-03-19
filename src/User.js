@@ -21,6 +21,8 @@ const User = ({
   const [guessPokemon, setGuessPokemon] = useState(null);
   const [guessvalue, setGuessvalue] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [game,setGame] = useState(false)
+  const [submit,setSubmit] = useState(false)
   const [pokemonData, setPokemonData] = useState({
     HP: "",
     Attack: "",
@@ -29,7 +31,6 @@ const User = ({
     "Special-defense": "",
     Speed: "",
   });
-  const [game,setGame] = useState(false)
   useEffect(() => {
     fetchPokemon();
   }, [fetchPokemon]);
@@ -43,6 +44,9 @@ const User = ({
     refreshPokemon();
     fetchPokemon();
   }
+ }
+ const handleSubmit = ()=>{
+  setSubmit(true)
  }
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,8 +95,8 @@ const User = ({
   const handleGame = () =>{
     const randomIndex = Math.floor(Math.random() * 50);
     const randompoke = Math.floor(Math.random() * 20);
-    console.log(randomIndex+" "+randompoke)
-    if(pokelist.length>(Math.abs(randomIndex))) return setGuessPokemon(pokelist[randomIndex].pokelist[randompoke])
+    // console.log(randomIndex+" "+randompoke)
+    if(pokelist.length>(Math.abs(randomIndex))) return setGuessPokemon(pokelist[randomIndex].pokelist[randompoke]),setSubmit(false)
     else return handleGame();
   }
   return (
@@ -481,17 +485,38 @@ const User = ({
                       fontWeight: "600",
                     }}
                   >
-                    Guess the name of that pokemon
+                    Guess the name of this pokemon
                   </div>
                   <div>
                   <input onChange={(e)=>setGuessvalue(e.target.value.toUpperCase())}style={{ textTransform: "uppercase",
                       fontSize: "24px",
                       borderRadius:'20px',
+                      marginTop:'1rem',
                       fontWeight: "400",}}></input>
+                  </div>
+                  {submit && guessvalue !== guessPokemon.name.toUpperCase() && (
+                    <div>
+                  <div
+                    style={{
+                      // textTransform: "uppercase",
+                      fontSize: "28px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    OOPS! You guess it wrong 
                   </div>
                   <div
                     style={{
-                      display:'none',
+                      // textTransform: "uppercase",
+                      fontSize: "28px",
+                      fontWeight: "600",
+                    }}
+                  >
+                     The name of this pokemon is 
+                  </div>
+                  <div
+                    style={{
+                      // display:'none',
                       textTransform: "uppercase",
                       fontSize: "32px",
                       fontWeight: "700",
@@ -499,9 +524,25 @@ const User = ({
                   >
                     {guessPokemon.name}
                   </div>
+                  </div> )  
+                  }
+                  {submit && guessvalue === guessPokemon.name.toUpperCase() && (
+                    <div>
+                  <div
+                    style={{
+                      // textTransform: "uppercase",
+                      fontSize: "28px",
+                      fontWeight: "600",
+                      marginTop:'1rem'
+                    }}
+                  >
+                   Congrats! You guess the correct name 
+                  </div>
+                  </div> )  
+                  }
                 
                   <button
-                    onClick={handleGame}
+                    onClick={submit?handleGame:handleSubmit}
                     style={{
                       background: "#FFF",
                       border: "1px solid #000",
@@ -516,7 +557,7 @@ const User = ({
                       // border: "none",
                     }}
                   >
-                  Retry
+                 {submit?'Retry' : 'Submit'}
                   </button>
                   <button
                     onClick={() => setGuessPokemon(null)}
@@ -541,7 +582,6 @@ const User = ({
           </Modal>
         </div>
       )}
-      ;
     </div>
   );
 };
